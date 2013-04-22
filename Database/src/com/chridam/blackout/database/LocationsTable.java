@@ -23,15 +23,15 @@ public class LocationsTable {
             + ");";
 
     public static void onCreate(SQLiteDatabase database) {
-        database.execSQL(DATABASE_CREATE);
+        //database.execSQL(DATABASE_CREATE);
     }
 
     public static void onUpgrade(SQLiteDatabase database, int oldVersion,
                                  int newVersion) {
-        Log.w(LocationsTable.class.getName(), "Upgrading database from version "
+       /* Log.w(LocationsTable.class.getName(), "Upgrading database from version "
                 + oldVersion + " to " + newVersion
                 + ", which will destroy all old data");
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_LOCATIONS);
-        onCreate(database);
+        onCreate(database);*/
     }
 }

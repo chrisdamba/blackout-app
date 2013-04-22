@@ -33,14 +33,13 @@ public class LocationListViewActivity extends ListActivity implements
         fillData();
 
         // Initiate the Cursor Loader
-        loaderManager.initLoader(0, null, this);
+        //loaderManager.initLoader(0, null, this);
     }
 
     private void fillData() {
         // Fields from the database (projection)
         // Must include the _id column for the adapter to work
         String[] columns = new String[] {
-                LocationsTable.COLUMN_ID,
                 LocationsTable.COLUMN_AREACODE,
                 LocationsTable.COLUMN_NAME,
                 LocationsTable.COLUMN_REGION
@@ -53,8 +52,12 @@ public class LocationListViewActivity extends ListActivity implements
                 R.id.region,
         };
 
+        // Initiate the Cursor Loader
+        loaderManager.initLoader(0, null, this);
+
         // create the adapter using the cursor pointing to the desired data
         //as well as the layout information
+
         adapter = new SimpleCursorAdapter(
                 this, // context
                 R.layout.location_info, // list item id
@@ -97,5 +100,23 @@ public class LocationListViewActivity extends ListActivity implements
     protected void onResume(){
         super.onResume();
         loaderManager.restartLoader(0, null, this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        loaderManager.destroyLoader(0);
+        /*if (openHelper != null) {
+            openHelper.close();
+        }
+        if (cdh != null) {
+            cdh.close();
+        }*/
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        loaderManager.destroyLoader(0);
     }
 }

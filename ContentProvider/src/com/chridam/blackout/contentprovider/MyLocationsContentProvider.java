@@ -11,6 +11,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -46,7 +47,7 @@ public class MyLocationsContentProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         database = new LocationsDatabaseHelper(getContext());
-        try {
+        /*try {
             database.createDataBase();
         } catch (IOException ioe) {
             throw new Error("Unable to create database");
@@ -56,7 +57,7 @@ public class MyLocationsContentProvider extends ContentProvider {
             database.openDataBase();
         } catch (SQLException sqle) {
             throw sqle;
-        }
+        }*/
 
         return false;
     }
@@ -87,8 +88,16 @@ public class MyLocationsContentProvider extends ContentProvider {
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
 
-        SQLiteDatabase db = database.getWritableDatabase();
-        Cursor cursor = queryBuilder.query(db, projection, selection,
+       /* SQLiteDatabase db = null;
+        try {
+            db =  database.getWritableDatabase();
+        } catch(SQLiteException e){
+
+        } finally {
+            if(db != null && db.isOpen())
+                db.close();
+        }*/
+        Cursor cursor = queryBuilder.query(database.getWritableDatabase(), projection, selection,
                 selectionArgs, null, null, sortOrder);
         // Make sure that potential listeners are getting notified
         cursor.setNotificationUri(getContext().getContentResolver(), uri);

@@ -17,7 +17,7 @@
       android:layout_height="wrap_content"
       android:layout_alignParentLeft="true"
       android:layout_alignParentTop="true"
-      android:text="Area Code: "
+      android:text="@string/label_areacode"
       android:textAppearance="?android:attr/textAppearanceMedium" />
 
   <TextView
@@ -26,7 +26,7 @@
       android:layout_height="wrap_content"
       android:layout_alignLeft="@+id/textView1"
       android:layout_below="@+id/textView1"
-      android:text="Name: "
+      android:text="@string/label_name"
       android:textAppearance="?android:attr/textAppearanceMedium" />
 
   <TextView
@@ -35,7 +35,7 @@
       android:layout_height="wrap_content"
       android:layout_alignLeft="@+id/textView2"
       android:layout_below="@+id/textView2"
-      android:text="Region: "
+      android:text="@string/label_region"
       android:textAppearance="?android:attr/textAppearanceMedium" />
 
   <TextView

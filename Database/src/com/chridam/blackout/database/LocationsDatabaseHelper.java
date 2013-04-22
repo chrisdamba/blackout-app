@@ -5,15 +5,13 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 public class LocationsDatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_PATH = "/data/data/com.chridam.blackout/databases/";
-    private static final String DATABASE_NAME = "loadshedding.db";
+    private static final String DATABASE_NAME = "load.db";
     private static final int DATABASE_VERSION = 1;
     private final Context mContext;
     private SQLiteDatabase mDataBase;
@@ -21,12 +19,13 @@ public class LocationsDatabaseHelper extends SQLiteOpenHelper {
     public LocationsDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.mContext = context;
+        createDataBase();
     }
 
     // Method is called during creation of the database
     @Override
     public void onCreate(SQLiteDatabase database) {
-        LocationsTable.onCreate(database);
+       // LocationsTable.onCreate(database);
     }
 
     // Method is called during an upgrade of the database,
@@ -34,11 +33,11 @@ public class LocationsDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase database, int oldVersion,
                           int newVersion) {
-        LocationsTable.onUpgrade(database, oldVersion, newVersion);
+       // LocationsTable.onUpgrade(database, oldVersion, newVersion);
     }
 
     // Creates a empty database on the system and rewrites it with own database
-    public void createDataBase() throws IOException {
+    public void createDataBase() {
         boolean dbExist = checkDataBase();
         if(dbExist){
             // Do nothing - database already exists
@@ -49,6 +48,7 @@ public class LocationsDatabaseHelper extends SQLiteOpenHelper {
             try {
                 copyDataBase();
             } catch (IOException e) {
+                Log.v("error", e.toString());
                 throw new Error("Error copying database");
             }
         }
@@ -56,7 +56,7 @@ public class LocationsDatabaseHelper extends SQLiteOpenHelper {
 
     // Check if the database already exist to avoid re-copying the file each time you open the application.
     private boolean checkDataBase(){
-        mDataBase = null;
+       /* mDataBase = null;
         try {
             String myPath = DATABASE_PATH + DATABASE_NAME;
             mDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
@@ -68,43 +68,58 @@ public class LocationsDatabaseHelper extends SQLiteOpenHelper {
         if(mDataBase != null){
             mDataBase.close();
         }
-        return mDataBase != null ? true : false;
+        return mDataBase != null ? true : false;*/
+        boolean checkdb = false;
+        try {
+            String myPath = DATABASE_PATH + DATABASE_NAME;
+            File dbfile = new File(myPath);
+            checkdb = dbfile.exists();
+        } catch (SQLiteException e) {
+            Log.v("error", e.toString());
+            throw new Error("Database doesn't exist yet.");
+        }
+        return checkdb;
     }
 
     // Copies your database from your local assets-folder to the just created empty database in the
     // system folder, from where it can be accessed and handled.
     // This is done by transferring bytestream.
     private void copyDataBase() throws IOException{
-        // Opens local db as the input stream
-        InputStream mInput = mContext.getAssets().open(DATABASE_NAME);
+        try {
+            // Opens local db as the input stream
+            InputStream mInput = mContext.getAssets().open(DATABASE_NAME);
 
-        // Path to the just created empty db
-        String outFileName = DATABASE_PATH + DATABASE_NAME;
+            // Path to the just created empty db
+            String outFileName = DATABASE_PATH + DATABASE_NAME;
 
-        // Opens the empty db as the output stream
-        OutputStream mOutput = new FileOutputStream(outFileName);
+            // Opens the empty db as the output stream
+            OutputStream mOutput = new FileOutputStream(outFileName);
 
-        // Transfer bytes from the inputfile to the outputfile
-        byte[] buffer = new byte[1024];
-        int length;
-        while ((length = mInput.read(buffer))>0){
-            mOutput.write(buffer, 0, length);
+            // Transfer bytes from the inputfile to the outputfile
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = mInput.read(buffer))>0){
+                mOutput.write(buffer, 0, length);
+            }
+
+            // Close the streams
+            mOutput.flush();
+            mOutput.close();
+            mInput.close();
         }
-
-        // Close the streams
-        mOutput.flush();
-        mOutput.close();
-        mInput.close();
+        catch (IOException e) {
+                Log.v("error", e.toString());
+        }
     }
 
     public void openDataBase() throws SQLException {
         // Open the database
-        String mPath = DATABASE_PATH + DATABASE_NAME;
-        mDataBase = SQLiteDatabase.openDatabase(mPath, null, SQLiteDatabase.OPEN_READONLY);
+       /* String mPath = DATABASE_PATH + DATABASE_NAME;
+        mDataBase = SQLiteDatabase.openDatabase(mPath, null, SQLiteDatabase.OPEN_READONLY);*/
     }
 
     @Override
-    public void close() {
+    public synchronized void close() {
         if(mDataBase != null)
             mDataBase.close();
         super.close();
