@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="app_name">Blackout</string>
-  <string name="some_text">Search Location</string>
-  <string name="some_hint">Type here to filter the location</string>
-  <string name="label_name">Name: </string>
-  <string name="label_areacode">Area Code: </string>
-  <string name="label_region">Region: </string>
+  <string name="app_name">Blackout - Load Shedding App</string>
+  <string name="no_results">There is currently no data</string>
 </resources>
